@@ -59,23 +59,24 @@ class StockData(object):
 
     @cherrypy.expose
     def index(self, q=None):
-        if q:
-            # Search for matching stocks.
-            stocks = []
-            for key in db.scan_iter(f'stock:{q.upper()}*'):
-                stock = db.hgetall(key)
-                stocks.append((
-                    stock['name'], stock['code'], stock['open'], stock['high'], stock['low'], stock['close'],
-                    stock['prev_close'], stock['change']))
-        else:
-            # Get top 10 stocks.
-            stocks = db.sort(
-                'stock', by='*->change', get=(
-                    '*->name', '*->code', '*->open', '*->high', '*->low', '*->close', '*->prev_close', '*->change'),
-                desc=True, groups=True, start=0, num=10)
-        template = Environment(loader=FileSystemLoader('templates')).get_template('index.html')
-        return template.render(
-            last_updated=datetime.fromtimestamp(float(db.get('last_updated'))).isoformat(), stocks=stocks, q=q or '')
+        return 'Hello World!'
+        # if q:
+        #     # Search for matching stocks.
+        #     stocks = []
+        #     for key in db.scan_iter(f'stock:{q.upper()}*'):
+        #         stock = db.hgetall(key)
+        #         stocks.append((
+        #             stock['name'], stock['code'], stock['open'], stock['high'], stock['low'], stock['close'],
+        #             stock['prev_close'], stock['change']))
+        # else:
+        #     # Get top 10 stocks.
+        #     stocks = db.sort(
+        #         'stock', by='*->change', get=(
+        #             '*->name', '*->code', '*->open', '*->high', '*->low', '*->close', '*->prev_close', '*->change'),
+        #         desc=True, groups=True, start=0, num=10)
+        # template = Environment(loader=FileSystemLoader('templates')).get_template('index.html')
+        # return template.render(
+        #     last_updated=datetime.fromtimestamp(float(db.get('last_updated'))).isoformat(), stocks=stocks, q=q or '')
 
 
 if __name__ == '__main__':
