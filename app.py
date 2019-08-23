@@ -10,6 +10,14 @@ import requests
 from jinja2 import Environment, FileSystemLoader
 
 
+config = {
+    'global': {
+        'server.socket_host': '0.0.0.0',
+        'server.socket_port': int(os.environ.get('PORT', 8080)),
+    }
+}
+
+
 class StockData(object):
     @cherrypy.expose
     def update(self):
@@ -59,29 +67,28 @@ class StockData(object):
 
     @cherrypy.expose
     def index(self, q=None):
-        return 'Hello World!'
-        # if q:
-        #     # Search for matching stocks.
-        #     stocks = []
-        #     for key in db.scan_iter(f'stock:{q.upper()}*'):
-        #         stock = db.hgetall(key)
-        #         stocks.append((
-        #             stock['name'], stock['code'], stock['open'], stock['high'], stock['low'], stock['close'],
-        #             stock['prev_close'], stock['change']))
-        # else:
-        #     # Get top 10 stocks.
-        #     stocks = db.sort(
-        #         'stock', by='*->change', get=(
-        #             '*->name', '*->code', '*->open', '*->high', '*->low', '*->close', '*->prev_close', '*->change'),
-        #         desc=True, groups=True, start=0, num=10)
-        # template = Environment(loader=FileSystemLoader('templates')).get_template('index.html')
-        # return template.render(
-        #     last_updated=datetime.fromtimestamp(float(db.get('last_updated'))).isoformat(), stocks=stocks, q=q or '')
+        if q:
+            # Search for matching stocks.
+            stocks = []
+            for key in db.scan_iter(f'stock:{q.upper()}*'):
+                stock = db.hgetall(key)
+                stocks.append((
+                    stock['name'], stock['code'], stock['open'], stock['high'], stock['low'], stock['close'],
+                    stock['prev_close'], stock['change']))
+        else:
+            # Get top 10 stocks.
+            stocks = db.sort(
+                'stock', by='*->change', get=(
+                    '*->name', '*->code', '*->open', '*->high', '*->low', '*->close', '*->prev_close', '*->change'),
+                desc=True, groups=True, start=0, num=10)
+        template = Environment(loader=FileSystemLoader('templates')).get_template('index.html')
+        return template.render(
+            last_updated=datetime.fromtimestamp(float(db.get('last_updated'))).isoformat(), stocks=stocks, q=q or '')
 
 
 if __name__ == '__main__':
     # Connect to Redis DB.
-    # db = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
+    db = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
 
     # Start server.
-    cherrypy.quickstart(StockData())
+    cherrypy.quickstart(StockData(), config=config)
