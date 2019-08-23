@@ -81,7 +81,7 @@ class StockData(object):
 
 if __name__ == '__main__':
     # Connect to Redis DB.
-    db = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
+    # db = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
 
     # Start server.
     cherrypy.quickstart(StockData())
