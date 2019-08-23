@@ -62,11 +62,9 @@ class StockData(object):
 
                 # Add timestamp.
                 db.set('last_updated', datetime.now().timestamp())
-        raise cherrypy.HTTPRedirect('/')
 
-    @cherrypy.expose
-    def shutdown(self):
-        cherrypy.engine.exit()
+        # Redirect to home.
+        raise cherrypy.HTTPRedirect('/')
 
     @cherrypy.expose
     def index(self, q=None):
