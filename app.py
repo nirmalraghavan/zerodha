@@ -91,7 +91,7 @@ class StockData(object):
         # Get last updated.
         last_updated = db.get('last_updated')
         if last_updated:
-            last_updated = datetime.fromtimestamp(float()).isoformat()
+            last_updated = datetime.fromtimestamp(float(last_updated)).isoformat()
         else:
             last_updated = 'No data found. Please sync now.'
 
