@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+    table, td, th {
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    form {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    th, td {
+      padding: 15px;
+    }
+
+    </style>
+</head>
+<body>
+
+<h2>Top 10 Stocks Today</h2>
+
+<!--Sync form.-->
+<form action="/update">
+    <label>Last synced on {{ last_updated }}</label>
+    <input type="submit" value="SYNC"/>
+</form>
+
+<!--Search form.-->
+<form action="/" align="end">
+    <input type="search" name="q" value="{{ q }}">
+    <input type="submit" value="SEARCH">
+</form>
+
+<!--Results.-->
+<table>
+    <tr>
+        <th>CODE</th>
+        <th>NAME</th>
+        <th>OPEN</th>
+        <th>HIGH</th>
+        <th>LOW</th>
+        <th>CLOSE</th>
+        <th>PREVIOUS CLOSE</th>
+        <th>CHANGE</th>
+    </tr>
+    {% for stock in stocks %}
+    <tr>
+        <td>{{ stock[1] }}</td>
+        <td>{{ stock[0] }}</td>
+        <td>{{ stock[2] }}</td>
+        <td>{{ stock[3] }}</td>
+        <td>{{ stock[4] }}</td>
+        <td>{{ stock[5] }}</td>
+        <td>{{ stock[6] }}</td>
+        <td>{{ stock[7] | float | round(2) }} %</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
