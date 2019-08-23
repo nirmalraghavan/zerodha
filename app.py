@@ -10,6 +10,7 @@ import requests
 from jinja2 import Environment, FileSystemLoader
 
 
+# Server configuration.
 config = {
     'global': {
         'server.socket_host': '0.0.0.0',
@@ -19,6 +20,8 @@ config = {
 
 
 class StockData(object):
+    """Handles table population and data update.
+    """
     @cherrypy.expose
     def update(self):
         # Build file URL.
@@ -81,9 +84,19 @@ class StockData(object):
                 'stock', by='*->change', get=(
                     '*->name', '*->code', '*->open', '*->high', '*->low', '*->close', '*->prev_close', '*->change'),
                 desc=True, groups=True, start=0, num=10)
+
+        # Load template.
         template = Environment(loader=FileSystemLoader('templates')).get_template('index.html')
-        return template.render(
-            last_updated=datetime.fromtimestamp(float(db.get('last_updated'))).isoformat(), stocks=stocks, q=q or '')
+
+        # Get last updated.
+        last_updated = db.get('last_updated')
+        if last_updated:
+            last_updated = datetime.fromtimestamp(float()).isoformat()
+        else:
+            last_updated = 'No data found. Please sync now.'
+
+        # Render template.
+        return template.render(last_updated=last_updated, stocks=stocks, q=q or '')
 
 
 if __name__ == '__main__':
