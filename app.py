@@ -1,12 +1,13 @@
 import csv
+import os
 from datetime import datetime, date
 from io import BytesIO, TextIOWrapper
 from zipfile import ZipFile
 
 import cherrypy
+import redis
 import requests
 from jinja2 import Environment, FileSystemLoader
-from redis import Redis
 
 
 class StockData(object):
@@ -79,7 +80,7 @@ class StockData(object):
 
 if __name__ == '__main__':
     # Connect to Redis DB.
-    db = Redis('localhost', 6379, decode_responses=True)
+    db = redis.from_url(os.environ.get("REDIS_URL"), decode_responses=True)
 
     # Start server.
     cherrypy.quickstart(StockData())
